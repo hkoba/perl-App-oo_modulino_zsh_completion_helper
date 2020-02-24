@@ -38,6 +38,8 @@ sub cmd_joined {
   print join($self->{eol}, @completion), $self->{eol};
 }
 
+sub IGNORE_OPTIONS_FROM {'MOP4Import::Base::CLI_JSON'}
+
 sub zsh_options {
   (my MY $self, my %opts) = @_;
 
@@ -59,7 +61,7 @@ sub zsh_options {
   my @grouped = map {
     my ($implClass, @specs) = @$_;
     if (not $universal_argument) {
-      ($implClass eq '' || $implClass eq $targetClass) ? @specs : ();
+      ($implClass eq '' || $implClass ne $self->IGNORE_OPTIONS_FROM) ? @specs : ();
     } else {
       @specs;
     }
