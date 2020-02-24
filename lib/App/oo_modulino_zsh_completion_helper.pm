@@ -7,7 +7,7 @@ use warnings;
 our $VERSION = "0.01";
 
 use MOP4Import::Base::CLI_JSON -as_base
-  , [fields => [separator => default => "\n"]]
+  , [fields => [eol => default => "\n"]]
   ;
 
 use MOP4Import::FieldSpec;
@@ -29,13 +29,13 @@ sub cli_inspector {
 
 sub onconfigure_zero {
   (my MY $self) = @_;
-  $self->{separator} = "\0";
+  $self->{eol} = "\0";
 }
 
 sub cmd_joined {
   (my MY $self, my ($method, @args)) = @_;
   my @completion = $self->$method(@args);
-  print join($self->{separator}, @completion);
+  print join($self->{eol}, @completion), $self->{eol};
 }
 
 sub zsh_options {
