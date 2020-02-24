@@ -50,6 +50,10 @@ function _perl_modulino {
     local debug=0
     if (($+DEBUG_ZSH_perl_modulino)) && ((DEBUG_ZSH_perl_modulino)); then
         debug=1
+    if ! [[ -x $words[1] ]]; then
+        # _message "No such module: $words[1]"
+        print "No such module: $words[1]"
+        return 0
     fi
 
     if _perl_modulino_is_completing_main_options; then
