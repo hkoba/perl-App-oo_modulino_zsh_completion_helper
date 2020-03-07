@@ -30,16 +30,16 @@ function _perl_modulino_inspect {
         "$@" || return $?
 }
 
-function _perl_modulino_is_completing_main_options {
-    local argList
-    argList=("$words[@]")
-    shift argList
-    local curPos=$[CURRENT-1]
-    local methodPos=$argList[(ri)[a-z]*]
-    if (($methodPos <= $#argList && $methodPos < $curPos)); then
-        return 1
-    fi
-    [[ $argList[$curPos] = -* ]]
+function _perl_modulino_set_method_pos {
+    local varName=$1; shift
+    local argList; argList=("${(@)argv[2,-1]}")
+    local pos=$argList[(ri)[[:alpha:]][[:IDENT:]]#]
+    typeset -g "$varName=$[pos+1]"
+}
+
+function _perl_modulino_debug_do {
+    if (($+debug)) && ((debug)); then setopt local_options; set -x; fi
+    "$@"
 }
 
 function _perl_modulino {
@@ -61,7 +61,14 @@ function _perl_modulino {
         return 0
     fi
 
-    if _perl_modulino_is_completing_main_options; then
+    local methodPos
+    _perl_modulino_debug_do \
+        _perl_modulino_set_method_pos methodPos "$words[@]"
+    if ((debug)); then
+        print CURRENT=$CURRENT methodPos=$methodPos
+    fi
+
+    if ((CURRENT < methodPos)) && [[ $words[CURRENT] == -* ]]; then
         local modulino_opts
         if ((debug)); then set -x; fi
         modulino_opts=(${(0)"$(_perl_modulino_inspect zsh_options)"})
@@ -71,13 +78,18 @@ function _perl_modulino {
 
         # _describe -t main_options "Main Options" modulino_opts && ret=0
         
-    else
+    elif ((CURRENT == methodPos)) || ((CURRENT + 1  == methodPos)); then
         local modulino_methods
         if ((debug)); then set -x; fi
         modulino_methods=(${(0)"$(_perl_modulino_inspect zsh_methods)"})
         if ((debug)); then set +x; fi
 
         _describe -t method "Methods" modulino_methods && ret=0
+
+    else
+        # XXX: argument name completion/ respects type
+
+        _files && ret=0
     fi
 
     return ret
