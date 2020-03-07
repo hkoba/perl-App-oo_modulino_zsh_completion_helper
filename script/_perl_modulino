@@ -55,7 +55,7 @@ function _perl_modulino {
         fi
     fi
 
-    if ! [[ -x $words[1] ]]; then
+    if ! [[ -x ${~words[1]} ]]; then
         # _message "No such module: $words[1]"
         print "No such module: $words[1]"
         return 0
