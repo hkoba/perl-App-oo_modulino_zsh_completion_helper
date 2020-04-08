@@ -7,25 +7,23 @@
   return 1
 }
 
-_perl_modulino_inspector=(
-    oo_modulino_zsh_completion_helper.pl
-    -0
-    joined
-)
+: ${_perl_modulino_inspector:=oo_modulino_zsh_completion_helper.pl}
 
 function _perl_modulino_inspect {
     local method=$1 pmfile
     shift || return 1
     pmfile=$words[1]
     shift words || return 1
-    # TODO: _call_program
+    local words_json;
+    words_json=$($_perl_modulino_inspector cli_array "$words[@]")
     $_perl_modulino_inspector \
+        -0 joined \
         $method \
         CURSOR $CURSOR \
         CURRENT $[CURRENT - 1] \
         NUMERIC "$NUMERIC" \
         pmfile $~pmfile \
-        words \[${(j/,/)${(@qqq)words}}\] \
+        words $words_json \
         BUFFER ${(q-)BUFFER} \
         "$@" || return $?
 }
