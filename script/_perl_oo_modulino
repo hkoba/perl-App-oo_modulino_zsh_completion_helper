@@ -1,22 +1,20 @@
 #compdef -P (*/)#*.pm
 
-# print "YESS, modulino!!, yess"
-
 (($+commands[oo_modulino_zsh_completion_helper.pl])) || {
   echo 1>&2 "Can't find oo_modulino_zsh_completion_helper.pl!"
   return 1
 }
 
-: ${_perl_modulino_inspector:=oo_modulino_zsh_completion_helper.pl}
+: ${_perl_oo_modulino_inspector:=oo_modulino_zsh_completion_helper.pl}
 
-function _perl_modulino_inspect {
+function _perl_oo_modulino_inspect {
     local method=$1 pmfile
     shift || return 1
     pmfile=$words[1]
     shift words || return 1
     local words_json;
-    words_json=$($_perl_modulino_inspector cli_array "$words[@]")
-    $_perl_modulino_inspector \
+    words_json=$($_perl_oo_modulino_inspector cli_array "$words[@]")
+    $_perl_oo_modulino_inspector \
         -0 joined \
         $method \
         CURSOR $CURSOR \
@@ -28,27 +26,27 @@ function _perl_modulino_inspect {
         "$@" || return $?
 }
 
-function _perl_modulino_set_method_pos {
+function _perl_oo_modulino_set_method_pos {
     local varName=$1; shift
     local argList; argList=("${(@)argv[2,-1]}")
     local pos=$argList[(ri)[[:alpha:]][[:IDENT:]]#]
     typeset -g "$varName=$[pos+1]"
 }
 
-function _perl_modulino_debug_do {
+function _perl_oo_modulino_debug_do {
     if (($+debug)) && ((debug)); then setopt local_options; set -x; fi
     "$@"
 }
 
-function _perl_modulino {
+function _perl_oo_modulino {
     integer ret=1
     # local curcontext=$curcontext state line
     # declare -A opt_args
 
     local debug=0
-    if (($+DEBUG_ZSH_perl_modulino)) && ((DEBUG_ZSH_perl_modulino)); then
+    if (($+DEBUG_ZSH_perl_oo_modulino)) && ((DEBUG_ZSH_perl_oo_modulino)); then
         debug=1
-        if ((DEBUG_ZSH_perl_modulino >= 2)); then
+        if ((DEBUG_ZSH_perl_oo_modulino >= 2)); then
             set -x
         fi
     fi
@@ -63,8 +61,8 @@ function _perl_modulino {
     fi
 
     local methodPos
-    _perl_modulino_debug_do \
-        _perl_modulino_set_method_pos methodPos "$words[@]"
+    _perl_oo_modulino_debug_do \
+        _perl_oo_modulino_set_method_pos methodPos "$words[@]"
     if ((debug)); then
         print CURRENT=$CURRENT methodPos=$methodPos
     fi
@@ -72,7 +70,7 @@ function _perl_modulino {
     if ((CURRENT < methodPos)) && [[ $words[CURRENT] == -* ]]; then
         local modulino_opts
         if ((debug)); then set -x; fi
-        modulino_opts=(${(0)"$(_perl_modulino_inspect zsh_options)"})
+        modulino_opts=(${(0)"$(_perl_oo_modulino_inspect zsh_options)"})
         if ((debug)); then set +x; fi
 
         _arguments : $modulino_opts && ret=0
@@ -82,7 +80,7 @@ function _perl_modulino {
     elif ((CURRENT == methodPos)) || ((CURRENT + 1  == methodPos)); then
         local modulino_methods
         if ((debug)); then set -x; fi
-        modulino_methods=(${(0)"$(_perl_modulino_inspect zsh_methods)"})
+        modulino_methods=(${(0)"$(_perl_oo_modulino_inspect zsh_methods)"})
         if ((debug)); then set +x; fi
 
         _describe -t method "Methods" modulino_methods && ret=0
@@ -96,4 +94,4 @@ function _perl_modulino {
     return ret
 }
 
-_perl_modulino
+_perl_oo_modulino
