@@ -71,7 +71,7 @@ sub zsh_options {
     if (ref (my FieldSpec $spec = $_)) {
       "--$spec->{name}=-". ($spec->{doc} ? "[$spec->{doc}]" : "");
     } else {
-      $_;
+      "--$_=-";
     }
   } @grouped;
 }
