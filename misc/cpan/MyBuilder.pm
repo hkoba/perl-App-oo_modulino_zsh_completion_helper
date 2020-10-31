@@ -23,20 +23,30 @@ sub _add_zsh_fpath {
   $self->add_build_element($elem);
 
   # XXX: Is this portable? only tested in Fedora...
-  my $zsh_fpath = "share/zsh/site-functions";
+  my $zsh_site_fpath = "share/zsh/site-functions";
+  my $zsh_vendor_completion = do {
+    my $rel = "share/zsh/vendor-completions";
+    if (-d "/usr/$rel") {
+      $rel
+    } else {
+      $zsh_site_fpath;
+    }
+  };
 
-  $self->install_base_relpaths($elem => $zsh_fpath);
-  $self->prefix_relpaths($_ => $elem => $zsh_fpath) for qw(core vendor site);
+  $self->install_base_relpaths($elem => $zsh_site_fpath);
+  $self->prefix_relpaths($_ => $elem => $zsh_site_fpath) for qw(site);
+  $self->prefix_relpaths($_ => $elem => $zsh_vendor_completion)
+    for qw(core vendor);
 
   my $installdirs = $self->installdirs;
   if ($self->install_path($elem)) {
     # Use specified value in Build.PL invocation.
   }
   elsif ($installdirs eq 'core' or $installdirs eq 'vendor') {
-    $self->install_path($elem => "/usr/$zsh_fpath");
+    $self->install_path($elem => "/usr/$zsh_vendor_completion");
   }
   elsif ($installdirs eq 'site') {
-    $self->install_path($elem => "/usr/local/$zsh_fpath");
+    $self->install_path($elem => "/usr/local/$zsh_site_fpath");
   }
   else {
     die "Unknown installdirs to derive zsh_fpath: $installdirs";
