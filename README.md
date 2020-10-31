@@ -1,14 +1,25 @@
 # NAME
 
-App::oo\_modulino\_zsh\_completion\_helper - It's new $module
+App::oo\_modulino\_zsh\_completion\_helper - provides zsh completion for OO-Modulinos
 
 # SYNOPSIS
 
-    use App::oo_modulino_zsh_completion_helper;
+When you install this module and _perl_modulino zsh completer,
+
+    ./Your_OO_Modulino.pm <TAB>
+
+will list methods of Your_OO_Modulino.pm. Also,
+
+    ./Your_OO_Modulino.pm --<TAB>
+
+will list options of Your_OO_Modulino.pm.
+
+If you give zsh numeric-arguments (via M-number or universal argument),
+inherited methods/options are included too.
 
 # DESCRIPTION
 
-App::oo\_modulino\_zsh\_completion\_helper is ...
+App::oo\_modulino\_zsh\_completion\_helper provides underlying implementation of `_perl_modulino` zsh completer.
 
 # LICENSE
 
