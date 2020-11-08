@@ -48,13 +48,13 @@ sub zsh_options {
   my ($targetClass, $has_shbang) = $self->load_module_from_pm($opts->{pmfile})
     or Carp::croak "Can't extract class name from $opts->{pmfile}";
 
-  my $optionPrefix = $opts->{words}[$opts->{CURRENT} - 1];
-  $optionPrefix =~ s/^--?//;
+  my $optionPrefix = $self->word_prefix($opts);
+  $optionPrefix =~ s/^--?// if defined $optionPrefix;
 
   my $universal_argument = $opts->{NUMERIC};
 
   my @options = $self->cli_inspector->list_options_of($targetClass);
-  if ($optionPrefix) {
+  if (defined $optionPrefix and $optionPrefix ne '') {
     @options = grep {/^$optionPrefix/} @options;
   }
 
@@ -86,7 +86,7 @@ sub zsh_methods {
 
   my $insp = $self->cli_inspector;
 
-  my $methodPrefix = $opts->{words}[$opts->{CURRENT} - 1];
+  my $methodPrefix = $self->word_prefix($opts);
 
   my $universal_argument = $opts->{NUMERIC};
 
@@ -117,6 +117,16 @@ sub zsh_methods {
       $_;
     }
   } @methods;
+}
+
+sub word_prefix {
+  (my MY $self, my ZshParams $opts) = @_;
+
+  unless ($opts->{words} && $opts->{CURRENT}) {
+    return undef;
+  }
+
+  $opts->{words}[$opts->{CURRENT} - 1];
 }
 
 sub gather_methods_from {
