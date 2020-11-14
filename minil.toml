@@ -1,7 +1,0 @@
-name = "App-oo_modulino_zsh_completion_helper"
-# badges = ["travis-ci.com"]
-authority="cpan:HKOBA"
-
-# module_maker="ModuleBuild"
-static_install = "auto"
-
