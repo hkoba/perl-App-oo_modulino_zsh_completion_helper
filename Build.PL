@@ -41,7 +41,7 @@ my %args = (
     test_files           => 't/',
     recursive_test_files => 1,
 
-    zsh_fpath_files => {"script/_perl_oo_modulino" => "zsh_fpath/_perl_modulino"},
+    zsh_fpath_files => {"script/_perl_oo_modulino" => "zsh_fpath/_perl_oo_modulino"},
 
     # install_path => {zsh_fpath => "/usr/local/share/zsh/site-functions"},
     # zsh_fpath installation path is automatically derived in MyBuilder(I hope)
