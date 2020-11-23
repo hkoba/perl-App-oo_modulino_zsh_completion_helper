@@ -37,7 +37,7 @@
    "provides" : {
       "App::oo_modulino_zsh_completion_helper" : {
          "file" : "lib/App/oo_modulino_zsh_completion_helper.pm",
-         "version" : "0.02"
+         "version" : "0.03"
       }
    },
    "release_status" : "stable",
@@ -46,6 +46,6 @@
          "url" : "https://github.com/hkoba/perl-App-oo_modulino_zsh_completion_helper.git"
       }
    },
-   "version" : "0.02",
+   "version" : "0.03",
    "x_serialization_backend" : "JSON::PP version 4.04"
 }
