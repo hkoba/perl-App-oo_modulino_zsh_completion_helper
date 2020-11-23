@@ -4,7 +4,7 @@ use 5.010;
 use strict;
 use warnings;
 
-our $VERSION = "0.01";
+our $VERSION = "0.02";
 
 use MOP4Import::Base::CLI_JSON -as_base
   , [fields => [eol => default => "\n"]]
