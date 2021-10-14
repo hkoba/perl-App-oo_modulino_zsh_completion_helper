@@ -177,7 +177,12 @@ sub load_module_from_pm {
 sub find_package_from_pm {
   (my MY $self, my $pmFile) = @_;
 
-  my $realFn = MOP4Import::Util::ResolveSymlinks::normalize($pmFile);
+  # This is a workaround for broken MOP4Import::Util::ResolveSymlinks::normalize
+  my $realFn = File::Spec->rel2abs(
+    -l $pmFile
+    ? MOP4Import::Util::ResolveSymlinks->resolve_symlink($pmFile)
+    : $pmFile
+  );
   $realFn =~ s/\.\w+\z//;
 
   my @dir = $self->splitdir($realFn);
