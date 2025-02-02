@@ -4,7 +4,7 @@ use 5.010;
 use strict;
 use warnings;
 
-our $VERSION = "0.04";
+our $VERSION = "0.05";
 
 use MOP4Import::Base::CLI_JSON -as_base
   , [fields => [eol => default => "\n"]]
@@ -24,7 +24,7 @@ use MOP4Import::Types
 
 sub cli_inspector {
   require MOP4Import::Util::Inspector;
-  'MOP4Import::Util::Inspector';
+  'MOP4Import::Util::Inspector'->new;
 }
 
 sub onconfigure_zero {
@@ -68,11 +68,17 @@ sub zsh_options {
   } $self->cli_inspector->group_options_of($targetClass, @options);
 
   map {
+    my $optSpec;
     if (ref (my FieldSpec $spec = $_)) {
-      "--$spec->{name}=-". ($spec->{doc} ? "[$spec->{doc}]" : "");
+      $optSpec = "--$spec->{name}=-";
+      $optSpec .= "[$spec->{doc}]" if $spec->{doc};
+      if ($spec->{zsh_completer}) {
+        $optSpec .= $spec->{zsh_completer};
+      }
     } else {
-      "--$_=-";
+      $optSpec = "--$_=-";
     }
+    $optSpec;
   } @grouped;
 }
 
@@ -140,6 +146,9 @@ sub gather_methods_from {
       my ($realName, $code) = @_;
       s/^cmd_//;
       if ($seenDict->{$_}++) {
+        return 0;
+      }
+      if (/^onconfigure_/) {
         return 0;
       }
       if ($self->cli_inspector->info_code_attribute(MetaOnly => $code)) {
