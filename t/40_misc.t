@@ -13,8 +13,16 @@ use_ok $_ for qw(
     App::oo_modulino_zsh_completion_helper
 );
 
+unless (eval {symlink("",""); 1}) {
+  plan skip_all => "symlink is not supported on this platform";
+}
+
+my $execFn = "$testDir/Baz.pm";
+
+ok symlink("lib/Foo/Bar/Baz.pm", $execFn), "prepare symlink";
+
 is_deeply(
-  [App::oo_modulino_zsh_completion_helper->find_package_from_pm("$testDir/Baz.pm")],
+  [App::oo_modulino_zsh_completion_helper->find_package_from_pm($execFn)],
   [
     qw(Foo::Bar::Baz),
     "$testDir/lib",
@@ -22,6 +30,6 @@ is_deeply(
  ], "find_package_from_pm should resolve symlink"
 );
 
+ok unlink($execFn), "remove the symlink";
 
 done_testing;
-
