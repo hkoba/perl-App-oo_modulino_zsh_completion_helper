@@ -7,7 +7,13 @@ use warnings;
 our $VERSION = "0.05";
 
 use MOP4Import::Base::CLI_JSON -as_base
-  , [fields => [eol => default => "\n"]]
+  , [fields =>
+     [eol => default => "\n"],
+     [lib =>
+      doc => "library directory list. SCALAR, ARRAY or ':' separated STRING",
+      zsh_completer => ": :_directories",
+    ],
+   ]
   ;
 
 use MOP4Import::FieldSpec;
@@ -23,8 +29,9 @@ use MOP4Import::Types
   ;
 
 sub cli_inspector {
+  (my MY $self) = @_;
   require MOP4Import::Util::Inspector;
-  'MOP4Import::Util::Inspector'->new;
+  'MOP4Import::Util::Inspector'->new(lib => $self->{lib});
 }
 
 sub onconfigure_zero {
